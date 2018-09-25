@@ -70,10 +70,12 @@ class FrontPage extends StatefulWidget {
 
 
 String title_home_page(day) => 'Controle de Horas - ${day}';
+var index = 0;
+String returnFirebase = '';
 class _FrontPageState extends State<FrontPage> {
   final DayOfJob _diaDeTrabalho = DayOfJob(DateTime.now(), null, null, null, null);
   
-  final TextStyle _biggerFont = const TextStyle(fontSize: 35.0);
+  final TextStyle _biggerFont = const TextStyle(fontSize: 25.0);
   final TextStyle _smallFont = const TextStyle(fontSize: 18.0);
   @override
   Widget build(BuildContext context) {
@@ -85,15 +87,7 @@ class _FrontPageState extends State<FrontPage> {
           stream: Firestore.instance.collection('horas_setembro').snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const Text('Loading...');
-            return new ListView.builder(
-              itemCount: snapshot.data.documents.length,
-              padding: const EdgeInsets.only(top: 10.0),
-              itemExtent: 25.0,
-              itemBuilder: (context, index) {
-                DocumentSnapshot ds = snapshot.data.ddocuments[index];
-                return _buildDayOfJob(ds);
-              }
-            );
+            return _buildDayOfJob(snapshot.data.documents[snapshot.data.documents.length -1]);
           }),
     );
   }
@@ -101,17 +95,25 @@ class _FrontPageState extends State<FrontPage> {
   Widget _buildDayOfJob( DocumentSnapshot ds) {
     return Column (
       children: <Widget>[
-        _buildEntry(_diaDeTrabalho, 'Entrada : '),
+        _buildEntry(_diaDeTrabalho, 'Entrada : ',ds),
         Text('--------Inicio Almoço---------'),
-        _buildGoLauch(_diaDeTrabalho, 'Ida : '),
-        _buildReturnLauch(_diaDeTrabalho, 'Volta : '),
+        _buildGoLauch(_diaDeTrabalho, 'Ida : ',ds),
+        _buildReturnLauch(_diaDeTrabalho, 'Volta : ',ds),
         Text('--------Almoço Fim----------'),
-        _buildEndDay(_diaDeTrabalho, 'Saida : ', ds)
+        _buildEndDay(_diaDeTrabalho, 'Saida : ', ds),
+        Text(returnFirebase)
       ],
     );
   }
-
-  Widget _buildEntry(DayOfJob day, String text) {
+  void Save(DayOfJob d, DocumentSnapshot ds) {
+    Firestore.instance.runTransaction((transaction) async {
+                  DocumentSnapshot freshSnap = await transaction.get(ds.reference);
+                  await transaction.update(freshSnap.reference, d.toJson());
+                }).then(
+                (re) => returnFirebase = re.toString()
+                ).catchError((e) => returnFirebase = e.toString());
+  }
+  Widget _buildEntry(DayOfJob day, String text, DocumentSnapshot ds) {
     final bool alreadyInformed = day.entry != null;
     String hour = day.hourFormatPtBr(day.entry);
       return ListTile(
@@ -127,13 +129,14 @@ class _FrontPageState extends State<FrontPage> {
           setState(() {
             if (day.entry == null) {
               day.entry  = DateTime.now();
+              Save(day, ds);
             }
           });
         }
     );
   }
   
-  Widget _buildGoLauch(DayOfJob day, String text) {
+  Widget _buildGoLauch(DayOfJob day, String text, DocumentSnapshot ds) {
     final bool alreadyInformed = day.goLauch != null;
     String hour = day.hourFormatPtBr(day.goLauch);
       return ListTile(
@@ -149,13 +152,14 @@ class _FrontPageState extends State<FrontPage> {
           setState(() {
             if (day.goLauch == null) {
               day.goLauch  = DateTime.now();
+              Save(day, ds);
             }
           });
         }
     );
   }
   
-  Widget _buildReturnLauch(DayOfJob day, String text) {
+  Widget _buildReturnLauch(DayOfJob day, String text, DocumentSnapshot ds) {
     final bool alreadyInformed = day.returnLauch != null;
     String hour = day.hourFormatPtBr(day.returnLauch);
       return ListTile(
@@ -171,6 +175,7 @@ class _FrontPageState extends State<FrontPage> {
           setState(() {
             if (day.returnLauch == null) {
               day.returnLauch  = DateTime.now();
+              Save(day, ds);
             }
           });
         }
@@ -192,10 +197,8 @@ class _FrontPageState extends State<FrontPage> {
         onTap: () {      // Add 9 lines from here...
           setState(() {
             if (day.endDay == null) {
-              Firestore.instance.runTransaction((transaction) async {
-                  DocumentSnapshot freshSnap = await transaction.get(ds.reference);
-                  await transaction.update(freshSnap.reference, day.toJson());
-                });
+                 day.endDay  = DateTime.now();
+              Save(day,ds);
             }
           });
         }
