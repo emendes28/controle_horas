@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "26880083366",
+    "firebase_url": "https://controlehoras-1536917848591.firebaseio.com",
+    "project_id": "controlehoras-1536917848591",
+    "storage_bucket": "controlehoras-1536917848591.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:26880083366:android:8960568c13ea9529",
+        "android_client_info": {
+          "package_name": "com.example.controlehoras"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "26880083366-rd4vajukotk8gk1ein0qc0tr4bb5nvng.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7Kkmt6Oz8PF7PN7lVzphMgUxEg6wSwl4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

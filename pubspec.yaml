@@ -1,4 +1,4 @@
-name: controle_horas
+name:  controle_horas
 description: A new Flutter project.
 
 # The following defines the version and build number for your application.
@@ -13,16 +13,11 @@ environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
-  cloud_firestore: ^0.7.3 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  googleapis: ^0.52.0
-  googleapis_auth: any
-
+  http: ^0.11.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
